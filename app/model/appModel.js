@@ -3,10 +3,7 @@
 const sql = require('./db.js')
 
 //Task object constructor
-const Task = function(task){
-    this.task = task.task;
-    this.status = task.status;
-    this.created_at = new Date();
+const Task = function(){
 };
 
 Task.getTaskById = function (taskId, result) {

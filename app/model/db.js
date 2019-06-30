@@ -1,5 +1,6 @@
 'user strict';
 
+const Sequelize = require('sequelize');
 const mysql = require('mysql');
 
 //local mysql db connection
