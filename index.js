@@ -6,8 +6,8 @@ const express = require('express'),
 
 
 const sql = require('./app/model/db.js');
-const  jwt  =  require('jsonwebtoken');
-const  bcrypt  =  require('bcryptjs'); 
+const jwt  =  require('jsonwebtoken');
+const bcrypt  =  require('bcryptjs'); 
 const SECRET_KEY = "secretkey23456";
 
 app.listen(port, () => console.log(`Server listening on port ${port}!`))
@@ -33,6 +33,7 @@ const findUser = (email, result) => {
 
 const createUser = (user, result) => {
     return sql.query("INSERT INTO personnel (personnel_onames, personnel_email, personnel_phone, personnel_fname, personnel_password) VALUES (?,?,?,?,?)", user, function(err, res){
+        console.log(sql, "sql")
         if(err) {
             console.log("error: ", err);
             result(err, null);
