@@ -19,7 +19,7 @@ var routes = require('./app/routes/approutes'); //importing route
 routes(app); //register the route
 
 const findUser = (email, result) => {
-    return sql.get("SELECT * FROM personnel WHERE email = ?", email, function (err, res){
+    return sql.query("SELECT * FROM personnel WHERE personnel_email = ?", email, function (err, res){
         if(err) {
             console.log("error: ", err);
             result(err, null);
@@ -32,7 +32,7 @@ const findUser = (email, result) => {
 };
 
 const createUser = (user, result) => {
-    return sql.run("INSERT INTO personnel (name, email, password) VALUES (?,?,?)", user, function(err, res){
+    return sql.query("INSERT INTO personnel (personnel_onames, personnel_email, personnel_phone, personnel_fname, personnel_password) VALUES (?,?,?,?,?)", user, function(err, res){
         if(err) {
             console.log("error: ", err);
             result(err, null);
@@ -66,5 +66,18 @@ app.post('/register',  (req, res) => {
 
 
 app.post('/login', (req, res) => {
-    res.status(200).send({ access_token: ''});
+    const  email  =  req.body.email;
+    const  password  =  req.body.password;
+    findUser(email, (err, user)=>{
+        if (err) return  res.status(500).send('Server error!');
+        if (!user) return  res.status(404).send('User not found!');
+        const  result  =  bcrypt.compareSync(password, user.password);
+        if(!result) return  res.status(401).send('Password not valid!');
+
+        const  expiresIn  =  24  *  60  *  60;
+        const  accessToken  =  jwt.sign({ id:  user.id }, SECRET_KEY, {
+            expiresIn:  expiresIn
+        });
+        res.status(200).send({ "user":  user, "access_token":  accessToken, "expires_in":  expiresIn});
+    });
 });
